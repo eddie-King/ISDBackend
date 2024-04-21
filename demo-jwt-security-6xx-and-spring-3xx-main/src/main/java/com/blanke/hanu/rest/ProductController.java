@@ -1,9 +1,6 @@
 package com.blanke.hanu.rest;
 
-import com.blanke.hanu.rest.dto.CategoryDTOResponse;
-import com.blanke.hanu.rest.dto.ProductDTOCreate;
-import com.blanke.hanu.rest.dto.ProductDTOFilter;
-import com.blanke.hanu.rest.dto.ProductDTOResponse;
+import com.blanke.hanu.rest.dto.*;
 import com.blanke.hanu.service.ProductService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +16,7 @@ import java.util.List;
 public class ProductController {
     final ProductService productService;
     @GetMapping("/list")
-    public List<ProductDTOResponse> searchProduct(@ModelAttribute ProductDTOFilter productDTOFilter){
+    public PagingDTOResponse searchProduct(@ModelAttribute ProductDTOFilter productDTOFilter){
         return productService.searchProduct(productDTOFilter);
     }
     @PostMapping("/add")

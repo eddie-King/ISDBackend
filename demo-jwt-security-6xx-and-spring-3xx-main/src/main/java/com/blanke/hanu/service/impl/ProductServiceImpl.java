@@ -6,6 +6,7 @@ import com.blanke.hanu.entity.Product;
 import com.blanke.hanu.mapper.ProductMapper;
 import com.blanke.hanu.repository.ProductRepository;
 import com.blanke.hanu.repository.criteria.ProductRepositoryCriteria;
+import com.blanke.hanu.rest.dto.PagingDTOResponse;
 import com.blanke.hanu.rest.dto.ProductDTOCreate;
 import com.blanke.hanu.rest.dto.ProductDTOFilter;
 import com.blanke.hanu.rest.dto.ProductDTOResponse;
@@ -27,7 +28,7 @@ public class ProductServiceImpl implements ProductService {
     ProductRepositoryCriteria productRepositoryCriteria;
     ProductRepository productRepository;
     @Override
-    public List<ProductDTOResponse> searchProduct(ProductDTOFilter productDTOFilter) {
+    public PagingDTOResponse searchProduct(ProductDTOFilter productDTOFilter) {
         return productRepositoryCriteria.search(productDTOFilter);
 //        return productRepositoryCriteria.findAll().stream()
 //                .map(ProductMapper::toProductDTOResponse)

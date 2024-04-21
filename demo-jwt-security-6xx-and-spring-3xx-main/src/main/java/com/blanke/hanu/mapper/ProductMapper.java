@@ -1,7 +1,6 @@
 package com.blanke.hanu.mapper;
 
 import com.blanke.hanu.entity.Product;
-import com.blanke.hanu.rest.dto.PagingDTOResponse;
 import com.blanke.hanu.rest.dto.ProductDTOCreate;
 import com.blanke.hanu.rest.dto.ProductDTOResponse;
 

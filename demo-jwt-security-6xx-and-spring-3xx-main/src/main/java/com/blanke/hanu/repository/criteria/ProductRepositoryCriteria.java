@@ -2,6 +2,7 @@ package com.blanke.hanu.repository.criteria;
 
 import com.blanke.hanu.entity.Product;
 import com.blanke.hanu.mapper.ProductMapper;
+import com.blanke.hanu.rest.dto.PagingDTOResponse;
 import com.blanke.hanu.rest.dto.ProductDTOFilter;
 import com.blanke.hanu.rest.dto.ProductDTOResponse;
 import jakarta.persistence.EntityManager;
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
 public class ProductRepositoryCriteria {
     EntityManager entity;
 
-    public List<ProductDTOResponse> search(ProductDTOFilter productDTOFilter) {
+    public PagingDTOResponse search(ProductDTOFilter productDTOFilter) {
         StringBuilder query = new StringBuilder("select p from Product p where 1=1 ");
         Map<String, Object> param = new HashMap<>();// save param
         //dynamic query
@@ -40,6 +41,9 @@ public class ProductRepositoryCriteria {
 
         Query countQuery = entity.createQuery(query.toString().replace("select p", "select count(p.id)"));
 
+        if (productDTOFilter.getSortByPrice() != null){
+            query.append(" order by p.price ").append(productDTOFilter.getSortByPrice());
+        }
 
         TypedQuery<Product> productTypedQuery = entity.createQuery(query.toString(), Product.class);
         // set param
@@ -57,14 +61,20 @@ public class ProductRepositoryCriteria {
             totalPage++;
         }
 
+
         // Pagging
         productTypedQuery.setFirstResult((pageIndex - 1) * pageSize);
         productTypedQuery.setMaxResults(pageSize);
 
         List<Product> productList = productTypedQuery.getResultList();
-
-        return productList.stream()
+        List<ProductDTOResponse> productDTOResponseList = productList.stream()
                 .map(ProductMapper::toProductDTOResponse)
                 .collect(Collectors.toList());
+
+        return PagingDTOResponse.builder()
+                .totalPage(totalPage)
+                .totalElement(totalProduct)
+                .data(productDTOResponseList)
+                .build();
     }
 }
