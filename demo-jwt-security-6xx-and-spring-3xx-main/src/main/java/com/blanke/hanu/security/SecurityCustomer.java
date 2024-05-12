@@ -29,6 +29,9 @@ public class SecurityCustomer implements UserDetails {
         authorities.add(new SimpleGrantedAuthority(""));
         return authorities;
     }
+    public Long getUserId(){
+        return customer.getId();
+    }
 
     @Override
     public String getPassword() {

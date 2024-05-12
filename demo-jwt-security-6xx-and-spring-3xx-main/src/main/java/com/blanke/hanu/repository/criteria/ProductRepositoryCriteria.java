@@ -73,6 +73,7 @@ public class ProductRepositoryCriteria {
 
         return PagingDTOResponse.builder()
                 .totalPage(totalPage)
+
                 .totalElement(totalProduct)
                 .data(productDTOResponseList)
                 .build();

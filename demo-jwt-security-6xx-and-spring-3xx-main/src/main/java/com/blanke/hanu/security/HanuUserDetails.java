@@ -3,6 +3,7 @@ package com.blanke.hanu.security;
 import com.blanke.hanu.entity.SiteUser;
 import com.blanke.hanu.repository.UserInfoRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -10,11 +11,13 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-@RequiredArgsConstructor
+
 @Service
 public class HanuUserDetails implements UserDetailsService {
 
-    private final UserInfoRepository userInfoRepository;
+    @Autowired
+    private UserInfoRepository userInfoRepository;
+
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -24,5 +27,6 @@ public class HanuUserDetails implements UserDetailsService {
         }
         return new SecurityCustomer(customer.get());
     }
+
 
 }

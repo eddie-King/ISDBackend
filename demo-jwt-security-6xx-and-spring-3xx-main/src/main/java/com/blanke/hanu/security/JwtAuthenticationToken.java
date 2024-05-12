@@ -8,11 +8,13 @@ import java.util.Collection;
 @Setter
 @Getter
 public class JwtAuthenticationToken extends AbstractAuthenticationToken {
+        private Long id;
         private String email;
         private String password;
 
-        public JwtAuthenticationToken(String email, String password) {
+        public JwtAuthenticationToken(Long id, String email, String password) {
             super((Collection)null);
+            this.id = id;
             this.password =  password;
             this.email = email;
             this.setAuthenticated(false);

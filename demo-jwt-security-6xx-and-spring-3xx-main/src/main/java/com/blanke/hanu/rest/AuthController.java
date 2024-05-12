@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -20,6 +21,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -30,17 +34,23 @@ public class AuthController {
     private final UserInfoRepository userInfoRepository;
 
     @PostMapping("/login")
-    public ResponseEntity<JwtResponse> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<JwtResponse> authenticateUser(@Valid HttpServletRequest request, @RequestBody LoginRequest loginRequest) {
         Authentication authentication = authenticationProvider
-                .authenticate(new JwtAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+                .authenticate(
+                        new JwtAuthenticationToken(
+                                loginRequest.getId(),
+                                loginRequest.getEmail(),
+                                loginRequest.getPassword()));
         //TODO: create jwt and response
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
         // create JWT
         String jwtToken = jwtService.generateToken(userDetails);
-        JwtResponse jwtResponse = new JwtResponse(jwtToken);
-
-        return ResponseEntity.ok(jwtResponse);
+        String bearerToken = "Bearer " + jwtToken;
+        JwtResponse jwtResponse = new JwtResponse(bearerToken);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.set("Authorization", bearerToken);
+        return ResponseEntity.ok().headers(httpHeaders).body(jwtResponse);
     }
 
     //TODO: aplly register
