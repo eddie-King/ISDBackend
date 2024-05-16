@@ -1,5 +1,6 @@
 package com.blanke.hanu.service.impl;
 
+import com.blanke.hanu.config.Common.ResponseModel;
 import com.blanke.hanu.entity.Cart;
 import com.blanke.hanu.entity.CartItem;
 import com.blanke.hanu.repository.CartItemRepository;
@@ -28,13 +29,17 @@ public class CartServiceImpl implements CartService {
     CartRepository cartRepository;
     @Autowired
     CartItemRepository cartItemRepository;
+    @Autowired
     JwtService service;
 
     @Override
     public void addToCart(HttpServletRequest request, ProductInCartDTO product) {
 
         try {
+            String token = request.getHeader("Authorization");
+            System.out.println("Token: " + token);
             Long userId = service.getUserIdFromToken(request);
+            System.out.println("UserId: " + userId);
             Cart cart = cartRepository.save(new Cart(null, userId));
                 cartItemRepository.save(
                         new CartItem(null, cart.getId(), product.getProductId(),

@@ -1,4 +1,4 @@
-package com.blanke.hanu.config.enums;
+package com.blanke.hanu.config.Common;
 import lombok.*;
 import org.springframework.http.HttpStatus;
 @AllArgsConstructor

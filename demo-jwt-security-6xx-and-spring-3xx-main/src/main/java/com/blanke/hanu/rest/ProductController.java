@@ -12,7 +12,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@RequestMapping("/auth/products")
+@RequestMapping("/products")
 public class ProductController {
     final ProductService productService;
     @GetMapping("/list")

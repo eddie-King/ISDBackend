@@ -1,14 +1,13 @@
 package com.blanke.hanu.security;
 
-import com.blanke.hanu.config.enums.ResponseStatus;
-import com.blanke.hanu.config.enums.StatusTemplate;
+import com.blanke.hanu.config.Common.ResponseStatus;
+import com.blanke.hanu.config.Common.StatusTemplate;
+import com.blanke.hanu.service.impl.UserInfoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,11 +21,13 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @Component
-@RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final JwtService jwtService;
-    private final UserDetailsService userDetailsService;
+    @Autowired
+    private  JwtService jwtService;
+
+    @Autowired
+    private UserInfoService userInfoService;
 
     @Autowired
     private ObjectMapper mapper;
@@ -42,14 +43,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
         try{
-            if (authHeader != null && authHeader.startsWith("Bearer ")) {
-                token = authHeader.substring(7);
-                username = jwtService.extractUsername(token);
+            if(request.getMethod().equals("GET")){
+                filterChain.doFilter(request,response);
+                return;
             }
+            if (!authHeader.startsWith("Bearer ")) throw new Exception("Token must start with Bearer");
+            token = authHeader.replace("Bearer ", "");
+            username = jwtService.extractUsername(token);
 
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                if (jwtService.isTokenValid(token, userDetails)) {
+                UserDetails userDetails = userInfoService.loadUserByUsername(username);
+                if (jwtService.validateToken(token, userDetails)) {
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
@@ -58,15 +62,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         }catch (Exception e){
             SecurityContextHolder.clearContext();
-            HttpServletResponse resp = (HttpServletResponse) response;
-            resp.setStatus(HttpStatus.UNAUTHORIZED.value());
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
              ResponseStatus responseStatus;
             if (e.getMessage().contains("no longer valid")) {
                 responseStatus = StatusTemplate.EXPIRE_TOKEN;
             } else {
                 responseStatus = StatusTemplate.TOKEN_IN_VALID;
             }
-            this.mapper.writeValue(resp.getOutputStream(), responseStatus);
+            this.mapper.writeValue(response.getOutputStream(), responseStatus);
         }
 
     }

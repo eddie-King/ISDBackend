@@ -1,6 +1,7 @@
-package com.blanke.hanu.config.enums;
+package com.blanke.hanu.config.Common;
 
 
+import com.blanke.hanu.config.Common.ResponseStatus;
 import org.springframework.http.HttpStatus;
 
 public interface StatusTemplate {

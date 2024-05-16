@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,16 +14,17 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
-@RequestMapping("/auth/cart")
+@RequestMapping("/cart")
 public class CartController {
-    final CartService cartService;
+    @Autowired
+     CartService cartService;
     @PostMapping("/save")
     public ResponseEntity<?> addProductToCart( HttpServletRequest request, @RequestBody ProductInCartDTO productInCartDTO){
        try {
            cartService.addToCart(request,productInCartDTO);
            return ResponseEntity.ok().build();
        }catch (Exception e){
+           System.out.println("not not not");
            return ResponseEntity.badRequest().build();
        }
     }

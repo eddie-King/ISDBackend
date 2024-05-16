@@ -13,7 +13,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@RequestMapping("/auth/categories")
+@RequestMapping("/categories")
 public class CategoryController {
     private final CategoryService categoryService;
 
